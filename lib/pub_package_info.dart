@@ -1,9 +1,22 @@
 library pub_package_info;
 
-import './src/pub_api.dart';
+import 'dart:async';
 
-getPackageInfo(String packageName) async {
-  PubApi pubApi = new PubApi();
+import './src/pub/resource/package.dart';
+import './src/pub/service.dart';
 
-  return await pubApi.getPackageInfo(packageName);
+export './src/pub/resource/package.dart';
+
+Future<PackageResource> getPackageInfo(String packageName) async {
+  PubService pubService = new PubService();
+
+  return await pubService.getPackageInfo(packageName);
+}
+
+Future<List> versionsSupportingSdkVersion(
+    String packageName, String sdkVersion) async {
+  PubService pubService = new PubService();
+
+  return pubService.versionsSupportingSdkVersion(
+      await getPackageInfo(packageName), sdkVersion);
 }

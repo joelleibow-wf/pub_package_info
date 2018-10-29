@@ -1,11 +1,18 @@
 import 'package:pub_package_info/pub_package_info.dart';
 
 main() async {
-  var packageInfo = await getPackageInfo('intl');
+  var dart2SupportingVersions =
+      await versionsSupportingSdkVersion('intl', '2.0.0');
 
-  print((packageInfo == null)
-      ? 'The package "intl" was not found.'
-      : packageInfo);
+  if (dart2SupportingVersions == null) {
+    print('The package "intl" was not found.');
+  } else {
+    dart2SupportingVersions.forEach((supportingVersion) {
+      var supportingVersionPubspec = supportingVersion['pubspec'];
+      print(
+          '"${supportingVersionPubspec['name']}" version ${supportingVersionPubspec['version']} supports the SDK constraint with ${supportingVersionPubspec['environment']['sdk']}');
+    });
+  }
 }
 
 // import 'package:http/http.dart' as http;
