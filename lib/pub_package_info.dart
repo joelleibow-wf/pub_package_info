@@ -6,6 +6,7 @@ import './src/pub/resource/package.dart';
 import './src/pub/service.dart';
 
 export './src/pub/resource/package.dart';
+export './src/pub/service.dart';
 
 Future<PackageResource> getPackageInfo(String packageName) async {
   PubService pubService = new PubService();
@@ -13,10 +14,8 @@ Future<PackageResource> getPackageInfo(String packageName) async {
   return await pubService.getPackageInfo(packageName);
 }
 
-Future<List> versionsSupportingSdkVersion(
-    String packageName, String sdkVersion) async {
+List versionsSupportingSdkVersion(PackageResource package, String sdkVersion) {
   PubService pubService = new PubService();
 
-  return pubService.versionsSupportingSdkVersion(
-      await getPackageInfo(packageName), sdkVersion);
+  return pubService.versionsSupportingSdkVersion(package, sdkVersion);
 }

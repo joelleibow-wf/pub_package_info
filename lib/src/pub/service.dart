@@ -10,7 +10,9 @@ class PubService {
   final PubApi _pubApi = new PubApi();
 
   Future<PackageResource> getPackageInfo(String packageName) async {
-    return new PackageResource(await _pubApi.getPackageInfo(packageName));
+    var packageMeta = await _pubApi.getPackageInfo(packageName);
+
+    return (packageMeta != null) ? new PackageResource(packageMeta) : null;
   }
 
   /**
@@ -27,7 +29,12 @@ class PubService {
         var packageVersionSdkConstraint =
             new VersionConstraint.parse(packageVersion.sdkConstraint);
 
-        return packageVersionSdkConstraint.allows(requiredSdkVersion);
+        // Assume that if max is `null` that it's an old version that doesn't actually support Dart2.
+        if (packageVersionSdkConstraint.max != null) {
+          return packageVersionSdkConstraint.allows(requiredSdkVersion);
+        }
+
+        return false;
       }
 
       return false;
