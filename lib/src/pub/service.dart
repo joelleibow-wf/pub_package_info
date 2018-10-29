@@ -14,15 +14,14 @@ class PubService {
 
   List versionsSupportingSdkVersion(
       PackageResource package, String sdkVersionRequirement) {
-    var sdkVersion = new Version.parse(sdkVersionRequirement);
+    var requiredSdkVersion = new Version.parse(sdkVersionRequirement);
 
     var matchingVersions = package.versions.where((packageVersion) {
-      if (packageVersion.containsKey('pubspec') &&
-          packageVersion['pubspec'].containsKey('environment') &&
-          packageVersion['pubspec']['environment'].containsKey('sdk')) {
-        var packageVersionSdkConstraint = new VersionConstraint.parse(
-            packageVersion['pubspec']['environment']['sdk']);
-        return packageVersionSdkConstraint.allows(sdkVersion);
+      if (packageVersion.sdkConstraint != null) {
+        var packageVersionSdkConstraint =
+            new VersionConstraint.parse(packageVersion.sdkConstraint);
+
+        return packageVersionSdkConstraint.allows(requiredSdkVersion);
       }
 
       return false;

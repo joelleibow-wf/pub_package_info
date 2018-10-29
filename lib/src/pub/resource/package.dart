@@ -10,5 +10,7 @@ class PackageResource extends MapView {
 
   String get name => this['name'];
 
-  Iterable<Map> get versions => this['versions'];
+  Iterable<PackageVersionResource> get versions => this['versions']
+      .map((packageVersion) => new PackageVersionResource(packageVersion))
+      .toList();
 }
