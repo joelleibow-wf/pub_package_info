@@ -1,19 +1,17 @@
 import 'package:pub_package_info/pub_package_info.dart';
 
 import '../tool/wdesk_deps.dart';
-// var wdeskDependencies = ['args'];
 
 main() async {
   String dartSdkConstraint = '2.0.0';
   PackageResource package;
-  PubService pubService = new PubService();
 
   for (var i = 0; i < wdeskDependencies.length; i++) {
-    package = await pubService.getPackageInfo(wdeskDependencies[i]);
+    package = await getPackageInfo(wdeskDependencies[i]);
 
     if (package != null) {
       var dart2SupportingVersions =
-          pubService.versionsSupportingSdkVersion(package, dartSdkConstraint);
+          versionsSupportingSdkVersion(package, dartSdkConstraint);
 
       // Print some output for copying and pasting into a Google Sheet.
       if (dart2SupportingVersions.isEmpty) {

@@ -6,7 +6,6 @@ import './src/pub/resource/package.dart';
 import './src/pub/service.dart';
 
 export './src/pub/resource/package.dart';
-export './src/pub/service.dart';
 
 Future<PackageResource> getPackageInfo(String packageName) async {
   PubService pubService = new PubService();
