@@ -6,8 +6,8 @@ main() async {
   String dartSdkConstraint = '2.0.0';
   PackageResource package;
 
-  for (var i = 0; i < wdeskDependencies.length; i++) {
-    package = await getPackageInfo(wdeskDependencies[i]);
+  for (var i = 0; i < wdeskPublicDependencies.length; i++) {
+    package = await getPackageInfo(wdeskPublicDependencies[i]);
 
     if (package != null) {
       var dart2SupportingVersions =
