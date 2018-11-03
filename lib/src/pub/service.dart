@@ -7,7 +7,11 @@ import './resource/package.dart';
 import './resource/package_version.dart';
 
 class PubService {
-  final PubApi _pubApi = new PubApi();
+  PubApi _pubApi;
+
+  PubService({pubServerHost}) {
+    _pubApi = new PubApi(pubServerHost ?? 'https://pub.dartlang.org');
+  }
 
   Future<PackageResource> getPackageInfo(String packageName) async {
     var packageMeta = await _pubApi.getPackageInfo(packageName);
