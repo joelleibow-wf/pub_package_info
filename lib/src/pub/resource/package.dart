@@ -6,7 +6,7 @@ class PackageResource extends MapView {
   PackageResource(Map map) : super(map);
 
   PackageVersionResource get latest =>
-      new PackageVersionResource(this['latest']['version']);
+      new PackageVersionResource(this['latest']);
 
   String get name => this['name'];
 
