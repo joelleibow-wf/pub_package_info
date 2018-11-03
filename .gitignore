@@ -2,3 +2,4 @@
 pubspec.lock
 
 .vscode/launch.json
+.env
