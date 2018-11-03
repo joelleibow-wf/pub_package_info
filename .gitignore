@@ -1,6 +1,7 @@
+.env
 .packages
 .pub
-pubspec.lock
-
 .vscode/launch.json
-.env
+pubspec.lock
+tool/tmp
+
