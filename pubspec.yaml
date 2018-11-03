@@ -3,6 +3,8 @@ version: 0.1.0
 environment:
   sdk: "^1.24.3"
 dependencies:
+  dloc:
+    git: git@github.com:joelleibow-wf/dloc.git
   dotenv: ^1.0.0
   git: ^0.5.1
   github: ^3.0.2
