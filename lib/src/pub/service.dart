@@ -13,10 +13,10 @@ class PubService {
     _pubApi = new PubApi(pubServerHost ?? 'https://pub.dartlang.org');
   }
 
-  Future<PackageResource> getPackageInfo(String packageName) async {
-    var packageMeta = await _pubApi.getPackageInfo(packageName);
+  Future<PackageResource> getPackage(String packageName) async {
+    final package = await _pubApi.getPackageInfo(packageName);
 
-    return (packageMeta != null) ? new PackageResource(packageMeta) : null;
+    return (package != null) ? new PackageResource(package) : null;
   }
 
   /**
@@ -26,14 +26,15 @@ class PubService {
    */
   List<PackageVersionResource> versionsSupportingSdkVersion(
       PackageResource package, String sdkVersionRequirement) {
-    var requiredSdkVersion = new Version.parse(sdkVersionRequirement);
+    final requiredSdkVersion = new Version.parse(sdkVersionRequirement);
 
-    var matchingVersions = package.versions.where((packageVersion) {
+    final matchingVersions = package.versions.where((packageVersion) {
       if (packageVersion.sdkConstraint != null) {
-        var packageVersionSdkConstraint =
+        final packageVersionSdkConstraint =
             new VersionConstraint.parse(packageVersion.sdkConstraint);
 
         // Assume that if max is `null` that it's an old version that doesn't actually support Dart2.
+        // ignore: undefined_getter
         if (packageVersionSdkConstraint.max != null) {
           return packageVersionSdkConstraint.allows(requiredSdkVersion);
         }
