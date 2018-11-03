@@ -4,6 +4,7 @@ environment:
   sdk: "^1.24.3"
 dependencies:
   dotenv: ^1.0.0
+  git: ^0.5.1
   github: ^3.0.2
   http: 0.11.3+16
   pub_semver: ^1.4.2
