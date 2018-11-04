@@ -8,6 +8,9 @@ class PackageResource extends MapView {
 
   PackageResource(Map map) : super(map);
 
+  bool get isWorkivaPackage =>
+      this['isPublicWorkivaPackage'] ?? latest.homepage.contains('Workiva');
+
   PackageVersionResource get latest {
     if (_latestVersion == null) {
       _latestVersion = new PackageVersionResource(this['latest']);
@@ -18,6 +21,8 @@ class PackageResource extends MapView {
 
   String get name => this['name'];
 
+  String get repositoryUri => this['repository'] ?? latest.homepage;
+
   List<PackageVersionResource> get versions {
     if (_versions == null) {
       _versions = this['versions']
@@ -27,6 +32,4 @@ class PackageResource extends MapView {
 
     return _versions;
   }
-
-  bool get isWorkivaPackage => latest.homepage.contains('Workiva');
 }

@@ -13,10 +13,12 @@ class PubService {
     _pubApi = new PubApi(pubServerHost ?? 'https://pub.dartlang.org');
   }
 
-  Future<PackageResource> getPackage(String packageName) async {
-    final package = await _pubApi.getPackageInfo(packageName);
+  Future<PackageResource> getPackage(Map packageConfig) async {
+    final package = await _pubApi.getPackageInfo(packageConfig['name']);
 
-    return (package != null) ? new PackageResource(package) : null;
+    return (package != null)
+        ? new PackageResource(package..addAll(packageConfig))
+        : null;
   }
 
   /**
