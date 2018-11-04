@@ -698,7 +698,11 @@ final _deprecated = [
   'build_barback',
 ];
 
-// Last pulled via https://datastudio.google.com/reporting/17zuxuZgMWxYqGwKS7UQAFr83tf9wShWJ/page/RDCa 10/31/2018.
+/**
+ * Last pulled via https://datastudio.google.com/reporting/17zuxuZgMWxYqGwKS7UQAFr83tf9wShWJ/page/RDCa: 10/31/2018.
+ * This is the only [Map] that will need to be consistently updated as repos
+ * are updated to support Dart2.
+*/
 final _internalDart2CompatibilePackages = {
   'browser_storage': {
     'dart2PullRequestUri': 'https://github.com/Workiva/browser-storage/pull/30'
