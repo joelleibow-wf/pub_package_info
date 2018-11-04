@@ -3,8 +3,8 @@ import 'package:pub_package_info/pub_package_info.dart';
 import '../tool/wdesk_deps.dart';
 
 main() async {
-  await _getDart2CompatiblePublicWdeskDependencies();
-  // await _getInternalWdeskDependencyDartMetrics();
+  // await _getDart2CompatiblePublicWdeskDependencies();
+  await _getInternalWdeskDependencyDartMetrics();
 }
 
 _getDart2CompatiblePublicWdeskDependencies() async {
@@ -30,13 +30,19 @@ _getDart2CompatiblePublicWdeskDependencies() async {
 }
 
 _getInternalWdeskDependencyDartMetrics() async {
-  final wdeskInternalDependencies = getInternalWdeskDependencies();
-  var internalPackageMetrics;
+  final wdeskInternalDependencies =
+      getInternalWdeskDependencies().values.toList();
+  var packageMetrics;
 
   for (var i = 0; i < wdeskInternalDependencies.length; i++) {
-    internalPackageMetrics =
+    packageMetrics =
         await getWorkivaPackageMetrics(wdeskInternalDependencies[i]);
-    print(
-        '${wdeskInternalDependencies[i]} has the following Dart metrics: ${internalPackageMetrics}');
+
+    if (packageMetrics != null) {
+      print(
+          '${packageMetrics.packageName}\t${packageMetrics.files}\t${packageMetrics.linesOfCode}\t${packageMetrics.blankLines}\t${packageMetrics.linesOfComments}');
+    } else {
+      print(wdeskInternalDependencies[i]['name']);
+    }
   }
 }
