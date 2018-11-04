@@ -20,7 +20,7 @@ class PackageResource extends MapView {
 
   List<PackageVersionResource> get versions {
     if (_versions == null) {
-      this['versions']
+      _versions = this['versions']
           .map((packageVersion) => new PackageVersionResource(packageVersion))
           .toList();
     }
