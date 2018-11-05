@@ -1,4 +1,6 @@
+.env
 .packages
+.pub
 pubspec.lock
 
 .vscode/launch.json
