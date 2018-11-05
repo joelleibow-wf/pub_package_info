@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:dotenv/dotenv.dart' show env, load;
@@ -29,12 +30,25 @@ class WorkivaRepository {
 
   fetch() async {
     if (!isLoaded) {
-      load();
-      _githubClient = createGitHubClient(
-          auth: new Authentication.withToken(env['GITHUB_API_TOKEN']));
+      _loadGithubClient();
 
       _repository =
           await _githubClient.repositories.getRepository(_repositorySlug);
+    }
+  }
+
+  Future<PullRequest> fetchPullRequest(int pullRequestNumber) async {
+    _loadGithubClient();
+
+    return await _githubClient.pullRequests
+        .get(_repositorySlug, pullRequestNumber);
+  }
+
+  _loadGithubClient() {
+    if (_githubClient == null) {
+      load();
+      _githubClient = createGitHubClient(
+          auth: new Authentication.withToken(env['GITHUB_API_TOKEN']));
     }
   }
 }
