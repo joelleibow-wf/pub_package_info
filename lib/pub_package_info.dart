@@ -19,12 +19,19 @@ Future<PackageResource> getWorkivaPackage(Map packageConfig) async {
       pubServerHost: 'https://pub.workiva.org');
 }
 
-Future<WorkivaPackageDartMetrics> getWorkivaPackageMetrics(
+Future<WorkivaPackageDartMetrics> getWorkivaPackageDartMetrics(
     Map packageConfig) async {
-  final package = (packageConfig['isPublicWorkivaPackage'] != null &&
-          packageConfig['isPublicWorkivaPackage'])
-      ? await getPackage(packageConfig)
-      : await getWorkivaPackage(packageConfig);
+  var package;
+
+  if (packageConfig['isGitDependency'] != null &&
+      packageConfig['isGitDependency']) {
+    package = new PackageResource(packageConfig);
+  } else {
+    package = (packageConfig['isPublicWorkivaPackage'] != null &&
+            packageConfig['isPublicWorkivaPackage'])
+        ? await getPackage(packageConfig)
+        : await getWorkivaPackage(packageConfig);
+  }
 
   if (package != null && package.isWorkivaPackage) {
     final workivaRepoService = new WorkivaPackageRepositoryService(package);
