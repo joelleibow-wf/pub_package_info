@@ -4,7 +4,7 @@ class PackageVersionResource extends MapView {
   dynamic _pubspec;
 
   PackageVersionResource(Map map) : super(map) {
-    this._pubspec = this['pubspec'] ?? new Map();
+    _pubspec = this['pubspec'] ?? new Map();
   }
 
   String get sdkConstraint {
