@@ -127,6 +127,7 @@ final _private = {
   },
   'opentracing_dart': {
     'name': 'opentracing_dart',
+    'repository': 'https://github.com/Workiva/opentracing_dart'
   },
   'proofread_frugal': {
     'name': 'proofread_frugal',
@@ -162,6 +163,7 @@ final _private = {
   },
   'thrift': {
     'name': 'thrift',
+    'repository': 'https://github.com/Workiva/thrift-dart'
   },
   'toolbars': {
     'name': 'toolbars',
