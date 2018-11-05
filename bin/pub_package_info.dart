@@ -5,6 +5,7 @@ import '../tool/wdesk_deps.dart';
 main() async {
   // await _getDart2CompatiblePublicWdeskDependencies();
   await _getInternalWdeskDependencyDartMetrics();
+  // await _getInternalWdeskDependencyDart2PullRequestMetrics();
 }
 
 _getDart2CompatiblePublicWdeskDependencies() async {
@@ -32,17 +33,42 @@ _getDart2CompatiblePublicWdeskDependencies() async {
 _getInternalWdeskDependencyDartMetrics() async {
   final wdeskInternalDependencies =
       getInternalWdeskDependencies().values.toList();
+  var metricsOutput;
   var packageMetrics;
+  var pullRequest;
 
   for (var i = 0; i < wdeskInternalDependencies.length; i++) {
     packageMetrics =
         await getWorkivaPackageDartMetrics(wdeskInternalDependencies[i]);
+    // Print some output for copying and pasting into a Google Sheet.
+    metricsOutput =
+        '${packageMetrics.packageName}\t${packageMetrics.files}\t${packageMetrics.linesOfCode}\t${packageMetrics.blankLines}\t${packageMetrics.linesOfComments}';
 
-    if (packageMetrics != null) {
-      print(
-          '${packageMetrics.packageName}\t${packageMetrics.files}\t${packageMetrics.linesOfCode}\t${packageMetrics.blankLines}\t${packageMetrics.linesOfComments}');
-    } else {
-      print(wdeskInternalDependencies[i]['name']);
+    if (wdeskInternalDependencies[i]['dart2PullRequestUri'] != null) {
+      pullRequest = await getWorkivaPackageDart2PullRequestMetrics(
+          wdeskInternalDependencies[i]);
+      metricsOutput +=
+          '\t${pullRequest.changedFilesCount}\t${pullRequest.additionsCount}\t${pullRequest.deletionsCount}\t${pullRequest.createdAt}\t${pullRequest.mergedAt}';
     }
+
+    print(metricsOutput);
+  }
+}
+
+_getInternalWdeskDependencyDart2PullRequestMetrics() async {
+  final dart2CompatibleInternalWdeskDependencies =
+      getInternalWdeskDependencies()
+          .values
+          .where(
+              (packageConfig) => packageConfig['dart2PullRequestUri'] != null)
+          .toList();
+  var pullRequest;
+
+  for (var i = 0; i < dart2CompatibleInternalWdeskDependencies.length; i++) {
+    pullRequest = await getWorkivaPackageDart2PullRequestMetrics(
+        dart2CompatibleInternalWdeskDependencies[i]);
+
+    print(
+        '\t${pullRequest.changedFilesCount}\t${pullRequest.additionsCount}\t${pullRequest.deletionsCount}\t${pullRequest.createdAt}\t${pullRequest.mergedAt}');
   }
 }

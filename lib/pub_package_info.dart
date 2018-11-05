@@ -2,6 +2,8 @@ library pub_package_info;
 
 import 'dart:async';
 
+import 'package:github/server.dart';
+
 import './src/pub/resource/package.dart';
 import './src/pub/service.dart';
 import './src/workiva_package_repository/model/workiva_package_dart_metrics.dart';
@@ -15,31 +17,34 @@ Future<PackageResource> getPackage(Map packageConfig,
 }
 
 Future<PackageResource> getWorkivaPackage(Map packageConfig) async {
-  return await getPackage(packageConfig,
-      pubServerHost: 'https://pub.workiva.org');
+  return (packageConfig['isGitDependency'] != null &&
+          packageConfig['isGitDependency'])
+      ? new PackageResource(packageConfig)
+      : await getPackage(packageConfig,
+          pubServerHost: 'https://pub.workiva.org');
 }
 
 Future<WorkivaPackageDartMetrics> getWorkivaPackageDartMetrics(
     Map packageConfig) async {
-  var package;
+  final package = (packageConfig['isPublicWorkivaPackage'] != null &&
+          packageConfig['isPublicWorkivaPackage'])
+      ? await getPackage(packageConfig)
+      : await getWorkivaPackage(packageConfig);
 
-  if (packageConfig['isGitDependency'] != null &&
-      packageConfig['isGitDependency']) {
-    package = new PackageResource(packageConfig);
-  } else {
-    package = (packageConfig['isPublicWorkivaPackage'] != null &&
-            packageConfig['isPublicWorkivaPackage'])
-        ? await getPackage(packageConfig)
-        : await getWorkivaPackage(packageConfig);
-  }
+  final workivaRepoService = new WorkivaPackageRepositoryService(package);
+  return await workivaRepoService.getDartCodeMetrics();
+}
 
-  if (package != null && package.isWorkivaPackage) {
-    final workivaRepoService = new WorkivaPackageRepositoryService(package);
+Future<PullRequest> getWorkivaPackageDart2PullRequestMetrics(
+    Map packageConfig) async {
+  final package = (packageConfig['isPublicWorkivaPackage'] != null &&
+          packageConfig['isPublicWorkivaPackage'])
+      ? await getPackage(packageConfig)
+      : await getWorkivaPackage(packageConfig);
 
-    return await workivaRepoService.getDartCodeMetrics();
-  }
-
-  return null;
+  final workivaRepoService = new WorkivaPackageRepositoryService(package);
+  return await workivaRepoService
+      .getPullRequestData(package['dart2PullRequestUri']);
 }
 
 List versionsSupportingSdkVersion(PackageResource package, String sdkVersion) {
