@@ -1,50 +1,40 @@
 import 'dart:io';
 
 import 'package:dotenv/dotenv.dart' show env, load;
-import 'package:git/git.dart';
 import 'package:github/server.dart';
 
-import '../../constants.dart';
-
 class WorkivaRepository {
-  Directory _cloneDir;
-  GitHub _github;
-  bool _isCloned = false;
-  Repository _repo;
-  RepositorySlug _repoSlug;
+  Directory _checkoutDirectory;
+  GitHub _githubClient;
+  Repository _repository;
+  RepositorySlug _repositorySlug;
 
   WorkivaRepository(Uri workivaGithubUri) {
     final repoName = workivaGithubUri.path.replaceFirst('/Workiva/', '');
-    _repoSlug = new RepositorySlug(
+    _repositorySlug = new RepositorySlug(
         'Workiva', repoName.replaceFirst('/', '', (repoName.length - 1)));
   }
 
-  bool get isLoaded => (_repo != null);
+  Directory get checkoutDirectory => _checkoutDirectory;
 
-  bool get isCloned => _isCloned;
+  set checkoutDirectory(Directory directory) => _checkoutDirectory = directory;
 
-  Directory get cloneDirectory => _cloneDir;
+  CloneUrls get cloneUrls => _repository?.cloneUrls;
 
-  clone() async {
-    await _fetchRepository();
-    _cloneDir = new Directory('${REPOSITORY_DIRECTORY}/${_repo.name}');
-    _isCloned = await _cloneDir.exists();
+  bool get hasCheckout => _checkoutDirectory?.existsSync();
 
-    if (!isCloned) {
-      await runGit(['clone', '--depth', '1', _repo.cloneUrls.ssh],
-          processWorkingDir: REPOSITORY_DIRECTORY);
+  bool get isLoaded => (_repository != null);
 
-      _isCloned = await _cloneDir.exists();
-    }
-  }
+  String get name => _repository?.name;
 
-  _fetchRepository() async {
+  fetch() async {
     if (!isLoaded) {
       load();
-      _github = createGitHubClient(
+      _githubClient = createGitHubClient(
           auth: new Authentication.withToken(env['GITHUB_API_TOKEN']));
 
-      _repo = await _github.repositories.getRepository(_repoSlug);
+      _repository =
+          await _githubClient.repositories.getRepository(_repositorySlug);
     }
   }
 }
