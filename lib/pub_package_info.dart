@@ -4,9 +4,8 @@ import 'dart:async';
 
 import './src/pub/resource/package.dart';
 import './src/pub/service.dart';
-import './src/repository/service.dart';
-
-export './src/pub/resource/package.dart';
+import './src/workiva_package_repository/model/workiva_package_dart_metrics.dart';
+import './src/workiva_package_repository/service.dart';
 
 Future<PackageResource> getPackage(Map packageConfig,
     {String pubServerHost}) async {
@@ -20,15 +19,17 @@ Future<PackageResource> getWorkivaPackage(Map packageConfig) async {
       pubServerHost: 'https://pub.workiva.org');
 }
 
-Future<Map<String, int>> getWorkivaPackageMetrics(Map packageConfig) async {
-  final package = await getWorkivaPackage(packageConfig);
+Future<WorkivaPackageDartMetrics> getWorkivaPackageMetrics(
+    Map packageConfig) async {
+  final package = (packageConfig['isPublicWorkivaPackage'] != null &&
+          packageConfig['isPublicWorkivaPackage'])
+      ? await getPackage(packageConfig)
+      : await getWorkivaPackage(packageConfig);
 
   if (package != null && package.isWorkivaPackage) {
-    final workivaRepoService = new WorkivaRepositoryService();
-    final workivaPackageRepo = workivaRepoService.getPackageRepository(package);
+    final workivaRepoService = new WorkivaPackageRepositoryService(package);
 
-    await workivaPackageRepo.clone();
-    return await workivaPackageRepo.dartCodeMetrics();
+    return await workivaRepoService.getDartCodeMetrics();
   }
 
   return null;
