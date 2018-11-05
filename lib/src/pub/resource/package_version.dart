@@ -13,6 +13,8 @@ class PackageVersionResource extends MapView {
         : null;
   }
 
+  String get homepage => _pubspec['homepage'];
+
   String get name => _pubspec['name'];
 
   String get version => _pubspec['version'];

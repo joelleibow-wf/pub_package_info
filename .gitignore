@@ -1,6 +1,11 @@
-.env
+# Editor files
+.vscode/launch.json
+
+# Dart files
 .packages
 .pub
-pubspec.lock
 
-.vscode/launch.json
+# Project files
+.env
+tool/tmp
+
