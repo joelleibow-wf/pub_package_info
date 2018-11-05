@@ -36,7 +36,7 @@ _getInternalWdeskDependencyDartMetrics() async {
 
   for (var i = 0; i < wdeskInternalDependencies.length; i++) {
     packageMetrics =
-        await getWorkivaPackageMetrics(wdeskInternalDependencies[i]);
+        await getWorkivaPackageDartMetrics(wdeskInternalDependencies[i]);
 
     if (packageMetrics != null) {
       print(
