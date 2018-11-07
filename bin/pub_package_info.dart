@@ -3,34 +3,50 @@ import 'package:pub_package_info/pub_package_info.dart';
 import '../tool/wdesk_deps.dart';
 
 main() async {
-  // await _getDart2CompatiblePublicWdeskDependencies();
-  await _getInternalWdeskDependencyDartMetrics();
+  await _getPublicWdeskDependencyDart2Metrics();
+  await _getInternalWdeskDependencyDartAndDart2PullRequestMetrics();
   // await _getInternalWdeskDependencyDart2PullRequestMetrics();
 }
 
-_getDart2CompatiblePublicWdeskDependencies() async {
+_getPublicWdeskDependencyDart2Metrics() async {
+  final currentDartSdkConstraint = '1.24.3';
   final dartSdkConstraint = '2.0.0';
-  final wdeskPublicDependencies = getPublicWdeskDependencies().values.toList();
+  final wdeskPublicDependencies =
+      getPublicWdeskDependencies(withDeprecated: false).values.toList();
+  var dart2SupportingVersion;
   var package;
+  var output;
+  var wdeskPackageVersion;
 
   for (var i = 0; i < wdeskPublicDependencies.length; i++) {
     package = await getPackage(wdeskPublicDependencies[i]);
 
+    // Only print the package name if there's no versions indicating support for Dart2.
+    output = '${package.name}\t${package.wdeskResolvedVersion}';
+
+    wdeskPackageVersion = package.versions
+        .firstWhere((pV) => pV.version == package.wdeskResolvedVersion);
+    output +=
+        '\t${(versionSupportsSdkVersion(wdeskPackageVersion, dartSdkConstraint) ? 'yes' : 'no')}';
+
     var dart2SupportingVersions =
-        versionsSupportingSdkVersion(package, dartSdkConstraint);
+        getVersionsSupportingSdkVersion(package, dartSdkConstraint);
 
     // Print some output for copying and pasting into a Google Sheet.
-    if (dart2SupportingVersions.isEmpty) {
-      // Only print the package name if there's no versions indicating support for Dart2.
-      print(package.name);
-    } else {
+    if (!dart2SupportingVersions.isEmpty) {
+      dart2SupportingVersion = dart2SupportingVersions.first;
+
       // Print the package name w/ its first supporting Dart2 version.
-      print('${package.name}\t${dart2SupportingVersions.first.version}');
+      output +=
+          '\t${dart2SupportingVersion.version}\t${(versionSupportsSdkVersion(
+          dart2SupportingVersion, currentDartSdkConstraint) ? 'yes' : 'no')}';
     }
+
+    print(output);
   }
 }
 
-_getInternalWdeskDependencyDartMetrics() async {
+_getInternalWdeskDependencyDartAndDart2PullRequestMetrics() async {
   final wdeskInternalDependencies =
       getInternalWdeskDependencies().values.toList();
   var metricsOutput;
@@ -55,20 +71,20 @@ _getInternalWdeskDependencyDartMetrics() async {
   }
 }
 
-_getInternalWdeskDependencyDart2PullRequestMetrics() async {
-  final dart2CompatibleInternalWdeskDependencies =
-      getInternalWdeskDependencies()
-          .values
-          .where(
-              (packageConfig) => packageConfig['dart2PullRequestUri'] != null)
-          .toList();
-  var pullRequest;
+// _getInternalWdeskDependencyDart2PullRequestMetrics() async {
+//   final dart2CompatibleInternalWdeskDependencies =
+//       getInternalWdeskDependencies()
+//           .values
+//           .where(
+//               (packageConfig) => packageConfig['dart2PullRequestUri'] != null)
+//           .toList();
+//   var pullRequest;
 
-  for (var i = 0; i < dart2CompatibleInternalWdeskDependencies.length; i++) {
-    pullRequest = await getWorkivaPackageDart2PullRequestMetrics(
-        dart2CompatibleInternalWdeskDependencies[i]);
+//   for (var i = 0; i < dart2CompatibleInternalWdeskDependencies.length; i++) {
+//     pullRequest = await getWorkivaPackageDart2PullRequestMetrics(
+//         dart2CompatibleInternalWdeskDependencies[i]);
 
-    print(
-        '\t${pullRequest.changedFilesCount}\t${pullRequest.additionsCount}\t${pullRequest.deletionsCount}\t${pullRequest.createdAt}\t${pullRequest.mergedAt}');
-  }
-}
+//     print(
+//         '\t${pullRequest.changedFilesCount}\t${pullRequest.additionsCount}\t${pullRequest.deletionsCount}\t${pullRequest.createdAt}\t${pullRequest.mergedAt}');
+//   }
+// }

@@ -3,7 +3,9 @@ library pub_package_info;
 import 'dart:async';
 
 import 'package:github/server.dart';
+import 'package:pub_semver/pub_semver.dart';
 
+import './src/pub/resource/package_version.dart';
 import './src/pub/resource/package.dart';
 import './src/pub/service.dart';
 import './src/workiva_package_repository/model/workiva_package_dart_metrics.dart';
@@ -47,6 +49,33 @@ Future<PullRequest> getWorkivaPackageDart2PullRequestMetrics(
       .getPullRequestData(package['dart2PullRequestUri']);
 }
 
-List versionsSupportingSdkVersion(PackageResource package, String sdkVersion) {
-  return new PubService().versionsSupportingSdkVersion(package, sdkVersion);
+List getVersionsSupportingSdkVersion(
+    PackageResource package, String sdkVersion) {
+  final matchingVersions = package.versions
+      .where((packageVersion) =>
+          versionSupportsSdkVersion(packageVersion, sdkVersion))
+      .toList()
+        ..sort((packageVersionB, packageVersionA) {
+          return new Version.parse(packageVersionB.version)
+              .compareTo(new Version.parse(packageVersionA.version));
+        });
+
+  return matchingVersions;
+}
+
+bool versionSupportsSdkVersion(
+    PackageVersionResource packageVersion, String sdkVersion) {
+  if (packageVersion.sdkConstraint == null) return false;
+
+  final requiredSdkVersion = new Version.parse(sdkVersion);
+  final packageVersionSdkConstraint =
+      new VersionConstraint.parse(packageVersion.sdkConstraint);
+
+  // Assume that if max is `null` that it's an old version that doesn't actually support Dart2.
+  // ignore: undefined_getter
+  if (packageVersionSdkConstraint.max != null) {
+    return packageVersionSdkConstraint.allows(requiredSdkVersion);
+  }
+
+  return false;
 }

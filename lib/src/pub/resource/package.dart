@@ -32,4 +32,6 @@ class PackageResource extends MapView {
 
     return _versions;
   }
+
+  String get wdeskResolvedVersion => this['version'];
 }
