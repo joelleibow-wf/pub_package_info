@@ -1,4 +1,5 @@
 import 'package:pub_package_info/pub_package_info.dart';
+import 'package:pub_semver/pub_semver.dart';
 
 import '../tool/wdesk_deps.dart';
 
@@ -30,7 +31,7 @@ _getPublicWdeskDependencyDart2Metrics() async {
         '\t${(versionSupportsSdkVersion(wdeskPackageVersion, dartSdkConstraint) ? 'yes' : 'no')}';
 
     var dart2SupportingVersions =
-        getVersionsSupportingSdkVersion(package, dartSdkConstraint);
+        _getPackageVersionsSupportingSdkVersion(package, dartSdkConstraint);
 
     // Print some output for copying and pasting into a Google Sheet.
     if (!dart2SupportingVersions.isEmpty) {
@@ -69,6 +70,20 @@ _getInternalWdeskDependencyDartAndDart2PullRequestMetrics() async {
 
     print(metricsOutput);
   }
+}
+
+List _getPackageVersionsSupportingSdkVersion(
+    PackageResource package, String sdkVersion) {
+  final matchingVersions = package.versions
+      .where((packageVersion) =>
+          versionSupportsSdkVersion(packageVersion, sdkVersion))
+      .toList()
+        ..sort((packageVersionB, packageVersionA) {
+          return new Version.parse(packageVersionB.version)
+              .compareTo(new Version.parse(packageVersionA.version));
+        });
+
+  return matchingVersions;
 }
 
 // _getInternalWdeskDependencyDart2PullRequestMetrics() async {

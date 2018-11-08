@@ -11,6 +11,8 @@ import './src/pub/service.dart';
 import './src/workiva_package_repository/model/workiva_package_dart_metrics.dart';
 import './src/workiva_package_repository/service.dart';
 
+export './src/pub/resource/package.dart';
+
 Future<PackageResource> getPackage(Map packageConfig,
     {String pubServerHost}) async {
   final pubService = new PubService(pubServerHost: pubServerHost);
@@ -47,20 +49,6 @@ Future<PullRequest> getWorkivaPackageDart2PullRequestMetrics(
   final workivaRepoService = new WorkivaPackageRepositoryService(package);
   return await workivaRepoService
       .getPullRequestData(package['dart2PullRequestUri']);
-}
-
-List getVersionsSupportingSdkVersion(
-    PackageResource package, String sdkVersion) {
-  final matchingVersions = package.versions
-      .where((packageVersion) =>
-          versionSupportsSdkVersion(packageVersion, sdkVersion))
-      .toList()
-        ..sort((packageVersionB, packageVersionA) {
-          return new Version.parse(packageVersionB.version)
-              .compareTo(new Version.parse(packageVersionA.version));
-        });
-
-  return matchingVersions;
 }
 
 bool versionSupportsSdkVersion(
